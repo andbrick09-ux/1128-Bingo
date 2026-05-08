@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1128 Bingo • SAP ERP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+        
+        :root {
+            --sap-blue: #0070AD;
+        }
+        
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        
+        .title-font {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+        }
+
+        .sap-header {
+            background: linear-gradient(135deg, #0070AD 0%, #005A8C 100%);
+        }
+
+        .stat-card {
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+                       box-shadow 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        .bingo-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+            box-shadow: 0 10px 15px -3px rgb(0 112 173 / 0.3), 
+                       0 4px 6px -4px rgb(0 112 173 / 0.3);
+        }
+        
+        .bingo-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 25px -5px rgb(0 112 173 / 0.4), 
+                       0 8px 10px -6px rgb(0 112 173 / 0.4);
+        }
+        
+        .bingo-btn:active {
+            transform: scale(0.96);
+        }
+
+        .history-row {
+            transition: background-color 0.1s ease;
+        }
+        
+        .history-row:hover {
+            background-color: #f8fafc;
+        }
+
+        .count-number {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .section-header {
+            font-size: 1.1rem;
+            letter-spacing: -0.015em;
+        }
+
+        .sap-logo {
+            filter: drop-shadow(0 4px 6px rgb(0 112 173 / 0.15));
+        }
+
+        .bingo-toast {
+            animation: bingo-pop 0.4s ease forwards, bingo-fade 0.4s ease 1.2s forwards;
+        }
+
+        @keyframes bingo-pop {
+            0% {
+                transform: scale(0.6) translateY(20px);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1) translateY(-5px);
+            }
+            100% {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes bingo-fade {
+            to {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+
+        .meeting-bg {
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.92), rgba(255,255,255,0.92)),
+                url('data:image/svg+xml,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill-rule=%22evenodd%22%3E%3Cpath fill=%22%23f1f5f9%22 fill-opacity=%22008%22 d=%22M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-10V8h-2v16h-4v2h4v4h2v-4h4v-2h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 6v-4H4v4H0v2h4v4h2V8h4V6H6z%22/%3E%3C/g%3E%3C/svg%27');
+            background-size: 60px 60px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <!-- Header -->
+    <header class="sap-header shadow-lg">
+        <div class="max-w-5xl mx-auto px-6 py-5">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-x-4">
+                    <!-- SAP Logo -->
+                    <div class="flex items-center justify-center w-14 h-14 bg-white rounded-2xl shadow-inner p-1.5">
+                        <svg width="52" height="52" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="sap-logo">
+                            <rect width="120" height="40" rx="6" fill="#0070AD"/>
+                            <text x="60" y="27" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="white" text-anchor="middle" dominant-baseline="middle">SAP</text>
+                        </svg>
+                    </div>
+                    
+                    <div>
+                        <h1 class="text-white text-4xl font-semibold tracking-tighter title-font">1128 Bingo</h1>
+                        <p class="text-blue-100 text-sm font-medium -mt-1">SAP ERP Meeting Edition</p>
+                    </div>
+                </div>
+                
+                <div class="hidden md:flex items-center gap-x-3 bg-white/10 backdrop-blur-md px-4 py-2 rounded-3xl border border-white/20">
+                    <div class="flex items-center gap-x-2">
+                        <i class="fa-solid fa-users text-white/80"></i>
+                        <span class="text-white text-sm font-medium">Live in meetings</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6 pt-8 pb-16">
+        
+        <!-- Hero / Button Section -->
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center gap-x-2 bg-white px-4 py-1.5 rounded-3xl shadow-sm border border-slate-200 mb-6">
+                <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                <span class="text-sm font-semibold text-slate-600">Ready for your next meeting</span>
+            </div>
+            
+            <h2 class="text-3xl md:text-4xl font-semibold text-slate-900 tracking-tight mb-3">
+                How many times will they say it today?
+            </h2>
+            <p class="text-slate-500 max-w-md mx-auto">Every time someone mentions <span class="font-semibold text-[#0070AD]">1128</span> in the meeting, hit the button.</p>
+            
+            <!-- Big Bingo Button -->
+            <div class="mt-8 flex justify-center">
+                <button id="bingo-btn"
+                        class="bingo-btn group relative flex items-center justify-center gap-x-4 bg-[#0070AD] hover:bg-[#005A8C] active:bg-[#004A75] text-white px-14 py-7 rounded-[2.75rem] shadow-xl text-2xl font-semibold tracking-tight">
+                    <div class="flex items-center gap-x-4">
+                        <i class="fa-solid fa-headset text-3xl group-active:scale-110 transition-transform"></i>
+                        <div class="text-left">
+                            <div class="font-bold tracking-tighter">HEARD 1128!</div>
+                            <div class="text-xs font-medium text-blue-200 -mt-0.5 tracking-[1px]">BINGO</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Subtle ring effect -->
+                    <div class="absolute inset-0 rounded-[2.75rem] ring-1 ring-inset ring-white/30 group-hover:ring-white/50 transition-all"></div>
+                </button>
+            </div>
+            
+            <p class="mt-4 text-xs text-slate-400">Pro tip: Press <span class="font-mono bg-slate-100 px-1.5 py-px rounded">SPACE</span> or click the button</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="mb-12">
+            <div class="flex items-end justify-between mb-4 px-1">
+                <div>
+                    <h3 class="section-header font-semibold text-slate-900">Live Counters</h3>
+                    <p class="text-sm text-slate-500">Automatically calculated from your entries</p>
+                </div>
+                <div id="total-count" 
+                     class="hidden md:flex items-center gap-x-2 bg-white border border-slate-200 text-sm font-semibold px-4 h-9 rounded-3xl shadow-sm">
+                    <span class="text-slate-500">All time:</span> 
+                    <span id="total-number" class="font-bold text-[#0070AD]">0</span>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <!-- Today -->
+                <div class="stat-card bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-x-3">
+                            <div class="w-9 h-9 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center">
+                                <i class="fa-solid fa-calendar-day fa-fw"></i>
+                            </div>
+                            <div>
+                                <div class="font-semibold text-slate-900">Today</div>
+                                <div class="text-[10px] text-emerald-600 font-medium tracking-wider">DAY</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="today-count" class="count-number text-6xl font-bold text-emerald-600 tabular-nums">0</div>
+                    <div class="text-xs text-emerald-600/70 mt-1">entries today</div>
+                </div>
+
+                <!-- This Week -->
+                <div class="stat-card bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-x-3">
+                            <div class="w-9 h-9 bg-violet-100 text-violet-600 rounded-2xl flex items-center justify-center">
+                                <i class="fa-solid fa-calendar-week fa-fw"></i>
+                            </div>
+                            <div>
+                                <div class="font-semibold text-slate-900">This Week</div>
+                                <div class="text-[10px] text-violet-600 font-medium tracking-wider">WEEK</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="week-count" class="count-number text-6xl font-bold text-violet-600 tabular-nums">0</div>
+                    <div class="text-xs text-violet-600/70 mt-1">entries this week</div>
+                </div>
+
+                <!-- This Month -->
+                <div class="stat-card bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-x-3">
+                            <div class="w-9 h-9 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center">
+                                <i class="fa-solid fa-calendar fa-fw"></i>
+                            </div>
+                            <div>
+                                <div class="font-semibold text-slate-900">This Month</div>
+                                <div class="text-[10px] text-amber-600 font-medium tracking-wider">MONTH</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="month-count" class="count-number text-6xl font-bold text-amber-600 tabular-nums">0</div>
+                    <div class="text-xs text-amber-600/70 mt-1">entries this month</div>
+                </div>
+
+                <!-- This Quarter -->
+                <div class="stat-card bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-x-3">
+                            <div class="w-9 h-9 bg-rose-100 text-rose-600 rounded-2xl flex items-center justify-center">
+                                <i class="fa-solid fa-calendar-alt fa-fw"></i>
+                            </div>
+                            <div>
+                                <div class="font-semibold text-slate-900">This Quarter</div>
+                                <div class="text-[10px] text-rose-600 font-medium tracking-wider">Q</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="quarter-count" class="count-number text-6xl font-bold text-rose-600 tabular-nums">0</div>
+                    <div class="text-xs text-rose-600/70 mt-1">entries this quarter</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Section -->
+        <div class="bg-white border border-slate-200 shadow-sm rounded-3xl overflow-hidden">
+            <div class="px-6 pt-6 pb-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
+                <div class="flex items-center gap-x-3">
+                    <i class="fa-solid fa-history text-slate-400 fa-lg"></i>
+                    <div>
+                        <h3 class="section-header font-semibold text-slate-900">Entry History</h3>
+                        <p class="text-xs text-slate-500">All presses are saved locally in your browser</p>
+                    </div>
+                </div>
+                
+                <button id="clear-btn"
+                        class="flex items-center gap-x-2 text-sm font-medium text-red-600 hover:text-red-700 px-4 py-2 rounded-2xl hover:bg-red-50 transition-colors">
+                    <i class="fa-solid fa-trash-can fa-sm"></i>
+                    <span>Clear all</span>
+                </button>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[520px]">
+                    <thead>
+                        <tr class="border-b border-slate-100 text-left">
+                            <th class="px-6 py-4 text-xs font-semibold text-slate-500 w-12">#</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-slate-500">DATE</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-slate-500">TIME</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-slate-500 w-20 text-right">ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-body" class="text-sm divide-y divide-slate-100">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="empty-state" class="hidden px-6 py-12 text-center">
+                <div class="mx-auto w-16 h-16 bg-slate-100 rounded-3xl flex items-center justify-center mb-4">
+                    <i class="fa-solid fa-inbox text-3xl text-slate-300"></i>
+                </div>
+                <p class="font-medium text-slate-600">No entries yet</p>
+                <p class="text-sm text-slate-400 mt-1">Hit the big button above when you hear "1128"</p>
+            </div>
+        </div>
+        
+        <div class="mt-6 text-center">
+            <p class="text-[10px] text-slate-400">Data is stored only in your browser (localStorage). Nothing is sent to any server.</p>
+        </div>
+    </main>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none"></div>
+
+    <script>
+        // Tailwind script
+        function initializeTailwind() {
+            document.documentElement.style.setProperty('--accent', '#0070AD');
+        }
+
+        // Data storage
+        let entries = [];
+
+        function loadEntries() {
+            const saved = localStorage.getItem('bingo1128Entries');
+            if (saved) {
+                try {
+                    entries = JSON.parse(saved);
+                } catch (e) {
+                    entries = [];
+                }
+            } else {
+                entries = [];
+            }
+        }
+
+        function saveEntries() {
+            localStorage.setItem('bingo1128Entries', JSON.stringify(entries));
+        }
+
+        // Date helpers
+        function isToday(date) {
+            const today = new Date();
+            return date.getFullYear() === today.getFullYear() &&
+                   date.getMonth() === today.getMonth() &&
+                   date.getDate() === today.getDate();
+        }
+
+        function getStartOfWeek(date) {
+            const d = new Date(date);
+            const day = d.getDay(); // 0 = Sunday, 1 = Monday, ...
+            const diff = (day + 6) % 7; // days since last Monday
+            const start = new Date(d);
+            start.setDate(d.getDate() - diff);
+            start.setHours(0, 0, 0, 0);
+            return start;
+        }
+
+        function isThisWeek(date) {
+            const startOfWeek = getStartOfWeek(new Date());
+            return date >= startOfWeek;
+        }
+
+        function isThisMonth(date) {
+            const now = new Date();
+            return date.getFullYear() === now.getFullYear() &&
+                   date.getMonth() === now.getMonth();
+        }
+
+        function isThisQuarter(date) {
+            const now = new Date();
+            const currentQuarter = Math.floor(now.getMonth() / 3) + 1;
+            const entryQuarter = Math.floor(date.getMonth() / 3) + 1;
+            return date.getFullYear() === now.getFullYear() &&
+                   entryQuarter === currentQuarter;
+        }
+
+        // Update statistics
+        function updateStats() {
+            let today = 0;
+            let week = 0;
+            let month = 0;
+            let quarter = 0;
+
+            entries.forEach(entry => {
+                const d = new Date(entry.timestamp);
+                if (isToday(d)) today++;
+                if (isThisWeek(d)) week++;
+                if (isThisMonth(d)) month++;
+                if (isThisQuarter(d)) quarter++;
+            });
+
+            // Update DOM
+            document.getElementById('today-count').textContent = today;
+            document.getElementById('week-count').textContent = week;
+            document.getElementById('month-count').textContent = month;
+            document.getElementById('quarter-count').textContent = quarter;
+
+            // Total
+            const totalEl = document.getElementById('total-number');
+            if (totalEl) totalEl.textContent = entries.length;
+        }
+
+        // Render history table
+        function renderHistory() {
+            const tbody = document.getElementById('history-body');
+            const emptyState = document.getElementById('empty-state');
+            
+            tbody.innerHTML = '';
+
+            if (entries.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            // Sort newest first
+            const sortedEntries = [...entries].sort((a, b) => {
+                return new Date(b.timestamp) - new Date(a.timestamp);
+            });
+
+            sortedEntries.forEach((entry, index) => {
+                const d = new Date(entry.timestamp);
+                
+                const dateStr = d.toLocaleDateString('en-US', { 
+                    weekday: 'short', 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
+                
+                const timeStr = d.toLocaleTimeString('en-US', { 
+                    hour: 'numeric', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+
+                const row = document.createElement('tr');
+                row.className = `history-row group`;
+                
+                row.innerHTML = `
+                    <td class="px-6 py-4 text-slate-400 font-mono text-xs w-12">#${String(entries.length - index).padStart(2, '0')}</td>
+                    <td class="px-6 py-4 font-medium text-slate-700">${dateStr}</td>
+                    <td class="px-6 py-4 text-slate-600 tabular-nums">${timeStr}</td>
+                    <td class="px-6 py-4 text-right">
+                        <button onclick="deleteEntry('${entry.timestamp}'); event.stopImmediatePropagation();" 
+                                class="opacity-40 group-hover:opacity-100 text-red-500 hover:text-red-600 p-2 -mr-2 transition-all hover:bg-red-50 rounded-xl">
+                            <i class="fa-solid fa-trash fa-sm"></i>
+                        </button>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        // Add new entry
+        function addEntry() {
+            const now = new Date();
+            const newEntry = {
+                timestamp: now.toISOString()
+            };
+            
+            entries.push(newEntry);
+            saveEntries();
+            
+            // Update UI
+            updateStats();
+            renderHistory();
+            
+            // Show fun toast
+            showBingoToast();
+            
+            // Button animation feedback
+            const btn = document.getElementById('bingo-btn');
+            btn.style.transform = 'scale(0.92)';
+            setTimeout(() => {
+                btn.style.transform = '';
+            }, 180);
+        }
+
+        // Delete single entry
+        function deleteEntry(timestamp) {
+            if (!confirm('Delete this entry?')) return;
+            
+            entries = entries.filter(e => e.timestamp !== timestamp);
+            saveEntries();
+            
+            updateStats();
+            renderHistory();
+        }
+
+        // Clear all entries
+        function clearAll() {
+            if (entries.length === 0) return;
+            
+            if (!confirm('Clear ALL history? This cannot be undone.')) return;
+            
+            entries = [];
+            localStorage.removeItem('bingo1128Entries');
+            
+            updateStats();
+            renderHistory();
+        }
+
+        // Show bingo toast
+        function showBingoToast() {
+            const container = document.getElementById('toast-container');
+            
+            const toast = document.createElement('div');
+            toast.className = `bingo-toast pointer-events-auto mx-auto flex items-center gap-x-3 bg-[#0070AD] text-white px-6 py-3.5 rounded-3xl shadow-2xl`;
+            toast.innerHTML = `
+                <div class="flex items-center gap-x-3">
+                    <div class="text-2xl">🎉</div>
+                    <div>
+                        <div class="font-bold tracking-tight">1128 BINGO!</div>
+                        <div class="text-xs text-blue-200 -mt-0.5">+1 to the count</div>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Remove after animation
+            setTimeout(() => {
+                toast.style.transition = 'all 0.3s ease';
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-15px)';
+                
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 1650);
+        }
+
+        // Keyboard support
+        function setupKeyboard() {
+            document.addEventListener('keydown', function(e) {
+                if (e.key === ' ' || e.key === 'Spacebar') {
+                    // Only trigger if not typing in an input
+                    if (document.activeElement.tagName === 'INPUT' || 
+                        document.activeElement.tagName === 'TEXTAREA') {
+                        return;
+                    }
+                    e.preventDefault();
+                    addEntry();
+                }
+                
+                if (e.key.toLowerCase() === 'c' && e.metaKey) {
+                    e.preventDefault();
+                    clearAll();
+                }
+            });
+            
+            // Also allow clicking anywhere on the hero area? But button is clear.
+        }
+
+        // Initialize everything
+        function initializeApp() {
+            initializeTailwind();
+            loadEntries();
+            
+            // Initial render
+            updateStats();
+            renderHistory();
+            
+            // Button click
+            const bingoBtn = document.getElementById('bingo-btn');
+            bingoBtn.addEventListener('click', addEntry);
+            
+            // Clear button
+            const clearBtn = document.getElementById('clear-btn');
+            clearBtn.addEventListener('click', clearAll);
+            
+            // Keyboard shortcuts
+            setupKeyboard();
+            
+            // Easter egg: click logo to add 5 demo entries (for testing)
+            const logo = document.querySelector('.sap-logo');
+            if (logo) {
+                let clickCount = 0;
+                logo.addEventListener('click', () => {
+                    clickCount++;
+                    if (clickCount === 5) {
+                        clickCount = 0;
+                        // Add 5 demo entries spread over time
+                        const now = new Date();
+                        for (let i = 0; i < 5; i++) {
+                            const demoDate = new Date(now);
+                            demoDate.setDate(now.getDate() - i);
+                            demoDate.setHours(9 + i, 30 + (i * 7), 0);
+                            
+                            entries.push({ timestamp: demoDate.toISOString() });
+                        }
+                        saveEntries();
+                        updateStats();
+                        renderHistory();
+                        
+                        const msg = document.createElement('div');
+                        msg.className = 'fixed bottom-24 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-4 py-2 rounded-2xl shadow';
+                        msg.textContent = 'Demo data added (for testing)';
+                        document.body.appendChild(msg);
+                        setTimeout(() => msg.remove(), 2200);
+                    }
+                });
+            }
+            
+            // Show total in mobile too (hidden on md+)
+            const totalContainer = document.getElementById('total-count');
+            if (totalContainer && window.innerWidth < 768) {
+                totalContainer.style.display = 'flex';
+            }
+            
+            // Welcome message for first time users
+            if (entries.length === 0) {
+                setTimeout(() => {
+                    const firstTime = document.createElement('div');
+                    firstTime.className = 'fixed bottom-6 right-6 bg-white border border-slate-200 shadow-xl rounded-3xl p-4 max-w-[260px] text-sm hidden md:block';
+                    firstTime.innerHTML = `
+                        <div class="flex gap-3">
+                            <div class="text-[#0070AD]">
+                                <i class="fa-solid fa-lightbulb fa-lg"></i>
+                            </div>
+                            <div class="text-slate-600">
+                                <strong class="text-slate-900">Tip:</strong> Press the big button or hit <span class="font-mono text-xs bg-slate-100 px-1 rounded">SPACE</span> during meetings.
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(firstTime);
+                    
+                    setTimeout(() => {
+                        firstTime.style.transition = 'opacity 0.4s ease';
+                        firstTime.style.opacity = '0';
+                        setTimeout(() => firstTime.remove(), 400);
+                    }, 5200);
+                }, 4200);
+            }
+            
+            // Make sure stats are accurate on load
+            console.log('%c[1128 Bingo] SAP ERP Edition initialized successfully', 'color:#64748b; font-size:9px');
+        }
+
+        // Boot the app
+        window.onload = initializeApp;
+        
+        // Expose for debugging (optional)
+        window.BINGO_DEBUG = {
+            clearAllData: () => {
+                localStorage.removeItem('bingo1128Entries');
+                location.reload();
+            }
+        };
+    </script>
+</body>
+</html>
